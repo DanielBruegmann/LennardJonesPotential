@@ -1,7 +1,8 @@
 var camera, scene, renderer;
 
-var A=0.002;
-var B=0.001;
+var A=0.02;
+var B=0.01;
+var T=0.1;
 
 var velocities = [];
 
@@ -26,11 +27,14 @@ function update_velocity(sphere_idx) {
 		if (i == sphere_idx) { continue; }
 		force.add(lennard_jones_force(i, sphere_idx));
 	}
-	velocities[sphere_idx].add(force);
+	velocities[sphere_idx].add(force.multiplyScalar(T));
 }
 
 function update_position(sphere_idx) {
-	scene.children[sphere_idx].position.add(velocities[sphere_idx]);	
+	var vel = new THREE.Vector3();
+	vel.copy(velocities[sphere_idx]);
+	vel.multiplyScalar(T);
+	scene.children[sphere_idx].position.add(vel);	
 	
 	if (scene.children[sphere_idx].position.x < -10 ||
 		scene.children[sphere_idx].position.x > 10) {
@@ -55,11 +59,12 @@ function init() {
 	var sphere;
 	var radius = 0.1;
 	var num_particles = 25;
+	var vel0 = 0.01;
 
 	for (var i = 0; i < num_particles; i++) {
 		sphere = new THREE.Mesh( new THREE.SphereGeometry( radius ), material );
 		sphere.position.set( -10 + 20*i/num_particles, 20*Math.random() - 10, 0 );
-		velocities.push(new THREE.Vector3(-1 + 2*Math.random(), -1 + 2*Math.random(), 0).multiplyScalar(0.1));
+		velocities.push(new THREE.Vector3(-1 + 2*Math.random(), -1 + 2*Math.random(), 0).multiplyScalar(vel0));
 		scene.add(sphere)
 	}
 }
