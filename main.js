@@ -1,7 +1,7 @@
 var camera, scene, renderer;
 
-var A=0.01;
-var B=0.01;
+var A=0.002;
+var B=0.001;
 
 var velocities = [];
 
@@ -20,14 +20,27 @@ function lennard_jones_force(from_idx, to_idx) {
 	return force;
 }
 
-function update_position(sphere_idx) {
+function update_velocity(sphere_idx) {
 	var force = new THREE.Vector3(0,0,0);
 	for (var i = 0; i < scene.children.length; i++) {
 		if (i == sphere_idx) { continue; }
 		force.add(lennard_jones_force(i, sphere_idx));
 	}
 	velocities[sphere_idx].add(force);
-	scene.children[sphere_idx].position.add(velocities[sphere_idx]);
+}
+
+function update_position(sphere_idx) {
+	scene.children[sphere_idx].position.add(velocities[sphere_idx]);	
+	
+	if (scene.children[sphere_idx].position.x < -10 ||
+		scene.children[sphere_idx].position.x > 10) {
+		velocities[sphere_idx].x = -velocities[sphere_idx].x;
+	}
+	if (scene.children[sphere_idx].position.y < -10 ||
+		scene.children[sphere_idx].position.y > 10) {
+		velocities[sphere_idx].y = -velocities[sphere_idx].y;
+	}
+	
 }
 
 function init() {
@@ -41,12 +54,12 @@ function init() {
 	var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
 	var sphere;
 	var radius = 0.1;
-	var num_particles = 10;
+	var num_particles = 25;
 
 	for (var i = 0; i < num_particles; i++) {
 		sphere = new THREE.Mesh( new THREE.SphereGeometry( radius ), material );
-		sphere.position.set( -2*i + num_particles, 0, 0 );
-		velocities.push(new THREE.Vector2(0,0,0))
+		sphere.position.set( -10 + 20*i/num_particles, 20*Math.random() - 10, 0 );
+		velocities.push(new THREE.Vector3(-1 + 2*Math.random(), -1 + 2*Math.random(), 0).multiplyScalar(0.1));
 		scene.add(sphere)
 	}
 }
@@ -56,9 +69,10 @@ function render() {
 	requestAnimationFrame( render );
 
 	for ( var i = 0, l = scene.children.length; i < l; i ++ ) {
-
-		var sphere = scene.children[ i ];
-		//update_position(i);
+		update_velocity(i);
+	}
+	for ( var i = 0, l = scene.children.length; i < l; i ++ ) {
+		update_position(i);
 	}
 
 	renderer.render(scene, camera);
