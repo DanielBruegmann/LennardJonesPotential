@@ -1,23 +1,34 @@
+var update_position = function(sphere, all_spheres) {
+	sphere.position.x += 0.01
+}
+
 var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+var camera = new THREE.OrthographicCamera( -10, 10, -10, 10, -1, 1);
 
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
-var geometry = new THREE.SphereGeometry( 1, 32, 32 );
 var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-var sphere2 = new THREE.Mesh( geometry, material );
-scene.add( sphere2 );
+var sphere;
+var radius = 0.1;
+var num_particles = 10;
 
-
-camera.position.z = 5;
+for (var i = 0; i < num_particles; i++) {
+	sphere = new THREE.Mesh( new THREE.SphereGeometry( radius ), material );
+	sphere.position.set( -2*i + num_particles, 0, 0 );
+	scene.add(sphere)
+}
 
 var render = function () {
 	requestAnimationFrame( render );
 
+	for ( var i = 0, l = scene.children.length; i < l; i ++ ) {
 
-	sphere2.position.x += 0.01
+		var sphere = scene.children[ i ];
+		update_position(sphere, [])
+
+	}
 
 	renderer.render(scene, camera);
 };
