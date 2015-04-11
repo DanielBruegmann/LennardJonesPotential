@@ -1,6 +1,6 @@
 var camera, scene, renderer;
 
-var A=0.02;
+var A=0.01;
 var B=0.01;
 var T=0.1;
 
@@ -35,7 +35,7 @@ function update_position(sphere_idx) {
 	vel.copy(velocities[sphere_idx]);
 	vel.multiplyScalar(T);
 	scene.children[sphere_idx].position.add(vel);	
-	
+	/*
 	if (scene.children[sphere_idx].position.x < -10 ||
 		scene.children[sphere_idx].position.x > 10) {
 		velocities[sphere_idx].x = -velocities[sphere_idx].x;
@@ -43,7 +43,7 @@ function update_position(sphere_idx) {
 	if (scene.children[sphere_idx].position.y < -10 ||
 		scene.children[sphere_idx].position.y > 10) {
 		velocities[sphere_idx].y = -velocities[sphere_idx].y;
-	}
+	}*/
 	
 }
 
@@ -58,12 +58,12 @@ function init() {
 	var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
 	var sphere;
 	var radius = 0.1;
-	var num_particles = 25;
+	var num_particles = 70;
 	var vel0 = 0.01;
 
 	for (var i = 0; i < num_particles; i++) {
 		sphere = new THREE.Mesh( new THREE.SphereGeometry( radius ), material );
-		sphere.position.set( -10 + 20*i/num_particles, 20*Math.random() - 10, 0 );
+		sphere.position.set(100*i/num_particles % 10 - 5, -10 + 20*i/num_particles, 0 );
 		velocities.push(new THREE.Vector3(-1 + 2*Math.random(), -1 + 2*Math.random(), 0).multiplyScalar(vel0));
 		scene.add(sphere)
 	}
